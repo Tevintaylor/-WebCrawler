@@ -1,7 +1,23 @@
 <?php
+include("connect.php");
 include("classes/DomDocumentParser.php");
 $alreadyCrawled = array();
 $crawling = array();
+
+function insertLink($url, $title, $description, $keywords){
+    global $con;
+
+    $query = $con->prepare("INSERT INTO sites(url,titles,description,keywords)
+                            VALUES(:url, :title, :description, :keywords)");
+    //this method of writing query protects the wbsite from injections to query before 
+    //it goes to the database
+    $query->bindParam(':url', $url);
+    $query->bindParam(':title', $title);
+    $query->bindParam(':description',$description);
+    $query->bindParam(':keywords',$keywords);
+
+    return $query->execute();
+}
 
 function createLink($src, $url){
    $scheme = parse_url($url)["scheme"];
@@ -38,7 +54,24 @@ function getDetails($url){
     if ($title == "") {
         return;
     }
-    echo "URL: $url, Title: $title<br>";
+    $description = "";
+    $keywords = "";
+
+    $metasArray = $parser->getMetaTags();
+
+    foreach($metasArray as $meta){
+        if($meta-> getAttribute('name') == "description"){
+            $description = $meta-> getAttribute('content');
+        }
+        if($meta-> getAttribute('name') == "keyword"){
+            $description = $meta-> getAttribute('content');
+        }
+    }
+    $description = str_replace("\n","",$description);
+    $keywords = str_replace("\n","",$keywords);
+
+    insertLink($url, $title, $description, $keywords);
+
 }
 
 function followLinks($url){
