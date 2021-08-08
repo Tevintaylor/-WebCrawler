@@ -59,6 +59,10 @@ include("config.php");
             </ul>
         </div>
     </div>
+    <div class="mainResultSection">
+        
+    </div>
+
 </div>
 
 </body>

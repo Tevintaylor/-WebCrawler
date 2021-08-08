@@ -3,6 +3,7 @@ include("config.php");
 include("classes/DomDocumentParser.php");
 $alreadyCrawled = array();
 $crawling = array();
+$alreadyFoundImages= array();
 
 function linkExists($url){
     global $con;
@@ -30,6 +31,21 @@ function insertLink($url, $title, $description, $keywords){
     return $query->execute();
 }
 
+function insertImage($url, $src, $title, $alt){
+    global $con;
+
+    $query = $con->prepare("INSERT INTO images(siteUrl,imageUrl,alt,title)
+                            VALUES(:siteUrl, :imageUrl, :alt, :title)");
+    //this method of writing query protects the wbsite from injections to query before 
+    //it goes to the database
+    $query->bindParam(':siteUrl', $url);
+    $query->bindParam(':imageUrl', $src);
+    $query->bindParam(':alt',$alt);
+    $query->bindParam(':title',$title);
+
+    $query->execute();
+}
+
 function createLink($src, $url){
 
    $scheme = parse_url($url)["scheme"];
@@ -54,6 +70,7 @@ function createLink($src, $url){
 }
 
 function getDetails($url){
+    global $alreadyFoundImages;
     $parser = new DomDocumentParser($url);
     $titleArray = $parser-> getTitleTags();
     if (sizeof($titleArray) == 0 || $titleArray ->item(0) == NULL){
@@ -84,13 +101,32 @@ function getDetails($url){
 
 
     if(linkExists($url)){
-        echo "$url already exsist";
+        echo "$url already exsist<br>";
     }
     else if(insertLink($url, $title, $description, $keywords)){
-        echo "SUCCESS: $url ";
+        echo "SUCCESS: $url<br>";
     }
     else{
-        echo "ERROR: Failed to insert $url";
+        echo "ERROR: Failed to insert $url<br>";
+    }
+
+    $imageArray = $parser -> getImages();
+    foreach ($imageArray as $image){
+        $src = $image -> getAttribute("src");
+        $alt = $image -> getAttribute("alt");
+        $title = $image -> getAttribute("title");
+
+        if(!$title && !$alt){
+            continue;
+        }
+        
+        $src = createLink($src,$url);
+
+        if(!in_array($src,$alreadyFoundImages)){
+            $alreadyFoundImages[] = $src;
+
+            insertImage($url, $src, $alt, $title);
+        }
     }
 
     insertLink($url, $title, $description, $keywords);
@@ -119,7 +155,7 @@ function followLinks($url){
 
             getDetails($href);
         }
-        else return;
+
         // echo $href . "<br>";
     }
 
@@ -129,6 +165,6 @@ function followLinks($url){
     }
 }
 
-$startUrl = "http://www.bbc.com";
+$startUrl = "http://www.instagram.com";
 followLinks($startUrl);
 ?>
