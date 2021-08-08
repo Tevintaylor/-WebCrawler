@@ -1,13 +1,24 @@
 <?php
-include("connect.php");
+include("config.php");
 include("classes/DomDocumentParser.php");
 $alreadyCrawled = array();
 $crawling = array();
 
+function linkExists($url){
+    global $con;
+
+    $query = $con->prepare("SELECT * FROM sites WHERE url = :url");
+    //this method of writing query protects the wbsite from injections to query before 
+    //it goes to the database
+    $query->bindParam(':url', $url);
+    $query->execute();
+    return $query->rowCount() != 0;
+}
+
 function insertLink($url, $title, $description, $keywords){
     global $con;
 
-    $query = $con->prepare("INSERT INTO sites(url,titles,description,keywords)
+    $query = $con->prepare("INSERT INTO sites(url,title,description,keywords)
                             VALUES(:url, :title, :description, :keywords)");
     //this method of writing query protects the wbsite from injections to query before 
     //it goes to the database
@@ -20,6 +31,7 @@ function insertLink($url, $title, $description, $keywords){
 }
 
 function createLink($src, $url){
+
    $scheme = parse_url($url)["scheme"];
    $host = parse_url($url)["host"];
 
@@ -57,18 +69,29 @@ function getDetails($url){
     $description = "";
     $keywords = "";
 
-    $metasArray = $parser->getMetaTags();
+    $metasArray = $parser->getMetatags();
 
     foreach($metasArray as $meta){
         if($meta-> getAttribute('name') == "description"){
             $description = $meta-> getAttribute('content');
         }
-        if($meta-> getAttribute('name') == "keyword"){
+        if($meta-> getAttribute('name') == "keywords"){
             $description = $meta-> getAttribute('content');
         }
     }
     $description = str_replace("\n","",$description);
     $keywords = str_replace("\n","",$keywords);
+
+
+    if(linkExists($url)){
+        echo "$url already exsist";
+    }
+    else if(insertLink($url, $title, $description, $keywords)){
+        echo "SUCCESS: $url ";
+    }
+    else{
+        echo "ERROR: Failed to insert $url";
+    }
 
     insertLink($url, $title, $description, $keywords);
 
