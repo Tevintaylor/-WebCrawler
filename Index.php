@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="搜索webCrawler">
-    <meta name="keywords" content="HTML, CSS, php,搜索webCrawler,搜索">
+    <meta name="keywords" content="HTML, CSS, php,搜索webCrawler,搜索,Javascript">
     <meta name="author" content="Tevin '佟维‘ Taylor">
 
     <link rel="stylesheet" href="assets/css/style.css">
