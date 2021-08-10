@@ -1,3 +1,4 @@
+ var timer;
  $(document).ready(function() {
      $(".result").on("click", function() {
          console.log("i was clicked");
@@ -19,6 +20,9 @@
      });
 
      var grid = $(".imageResults");
+     grid.on("layoutComplete", function() {
+         $(".gridItem img").css("visibility", "visible")
+     })
 
      grid.masonry({
          // options
@@ -33,7 +37,13 @@
      var image = $("<img>");
      image.on("load", function() {
          $("." + className + " a").append(image);
+
+         clearTimeout(timer);
+         timer = setTimeout(function() {
+             $(".imageResults").masonry();
+         }, 100);
      });
+
      image.on("error", function() {
 
      });

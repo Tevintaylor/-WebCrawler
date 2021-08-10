@@ -256,6 +256,7 @@
     .gridItem img {
         max-width: 200px;
         min-width: 50px;
+        visibility: hidden;
     }
     
     .gridItem .details {
