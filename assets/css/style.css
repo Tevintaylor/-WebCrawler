@@ -249,6 +249,10 @@
         margin: 20px;
     }
     
+    .gridItem {
+        position: relative;
+    }
+    
     .gridItem img {
         max-width: 200px;
         min-width: 50px;
@@ -256,7 +260,7 @@
     
     .gridItem .details {
         visibility: hidden;
-        position: relative;
+        position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
@@ -269,6 +273,6 @@
         white-space: nowrap;
     }
     
-    .gridItem:hover details {
+    .gridItem:hover .details {
         visibility: visible;
     }

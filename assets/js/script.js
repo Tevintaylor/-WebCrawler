@@ -17,6 +17,16 @@ $(document).ready(function() {
         //return false; PREVENTS THE LINK FROM GOING TO A PAGE WHEN CLICKED
         return false;
     });
+
+    var grid = $(".imageResults");
+
+    grid.masonry({
+        // options
+        itemSelector: '.gridItem',
+        columnWidth: 200,
+        gutter: 5,
+        isInitLayout: false
+    });
 });
 
 function increaseLinkClicks(linkId, url) {
