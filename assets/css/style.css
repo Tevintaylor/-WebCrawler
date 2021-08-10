@@ -245,7 +245,7 @@
         color: #EC9E23;
     }
     
-    .mainResultsSection .ImageResults {
+    .mainResultsSection .imageResults {
         margin: 20px;
     }
     
@@ -261,8 +261,8 @@
     .gridItem .details {
         visibility: hidden;
         position: absolute;
-        bottom: 0;
-        left: 0;
+        bottom: 0px;
+        left: 0px;
         width: 100%;
         overflow: hidden;
         background-color: rgba(0, 0, 0, 0.8);

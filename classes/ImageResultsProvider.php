@@ -39,7 +39,9 @@ class ImageResultsProvider{
 
         $resultsHtml = "<div class ='imageResults'>";
 
+        $count = 0;
         while( $row = $query->fetch(PDO::FETCH_ASSOC)){
+            $count++;
             $id = $row['id'];
             $imageUrl = $row['imageUrl'];
             $siteUrl = $row['siteUrl'];
@@ -54,9 +56,14 @@ class ImageResultsProvider{
                 $displayText = $imageUrl;
             }
          
-            $resultsHtml .= "<div class='gridItem'>
+            $resultsHtml .= "<div class='gridItem image$count'>
                                 <a href='$imageUrl'>
-                                        <img src='$imageUrl'>
+                                        <script>
+                                            $(document).ready(function(){
+                                                loadImage(\"$imageUrl\", \"image$count\");
+                                            });
+                                        </script>
+                                        
                                         <span class='details'>$displayText</span>
                                 </a>
                              </div>";
