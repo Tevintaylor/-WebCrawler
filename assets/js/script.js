@@ -32,7 +32,27 @@
          isInitLayout: false
      });
 
-     $("[data-fancybox]").fancybox();
+     $("[data-fancybox]").fancybox({
+
+         caption: function(instance, item) {
+             var caption = $(this).data('caption') || '';
+             var siteUrl = $(this).data('siteurl') || '';
+
+
+             if (item.type === 'image') {
+                 caption = (caption.length ? caption + '<br />' : '') +
+                     '<a href="' + item.src + '">View image</a><br>' +
+                     '<a href="' + siteUrl + '">Visit page</a>';
+             }
+
+             return caption;
+         },
+         afterShow: function(instance, item) {
+             increaseImageClicks(item.src);
+         }
+
+
+     });
  });
 
  function loadImage(src, className) {
@@ -64,4 +84,16 @@
              }
              window.location.href = url;
          });
+ }
+
+ function increaseImageClicks(imageUrl) {
+
+     $.post("ajax/updateImageCount.php", { imageUrl: imageUrl })
+         .done(function(result) {
+             if (result != "") {
+                 alert(result);
+                 return;
+             }
+         });
+
  }
